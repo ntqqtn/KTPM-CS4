@@ -23,87 +23,141 @@
         .gold-table .highlight {
             background-color: #fefcbf;
         }
+        .separator {
+            background-color: #d1d5db;
+            font-weight: bold;
+            color: #374151;
+        }
     </style>
 </head>
 <body class="bg-gray-100">
     <!-- Main Content -->
     <main class="container mx-auto px-4 py-8">
-        <!-- Gold Price Table -->
         <section class="mb-8">
-            <h2 class="text-xl font-semibold mb-4">Bảng giá vàng cập nhật mới nhất</h2>
+            <h2 class="text-xl font-semibold mb-4">Bảng giá vàng</h2>
+            <div class="mb-4">
+                <label for="datePicker" class="text-sm font-medium text-gray-700">Chọn ngày để xem :</label>
+                <input type="date" id="datePicker" class="ml-2 p-2 border rounded" max="2025-04-13">
+                <button onclick="loadHistoricalData()" class="ml-2 px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700">Xem</button>
+            </div>
             <table class="gold-table w-full text-sm">
                 <thead>
                     <tr>
+                        <th>Ngày</th>
                         <th>Loại vàng</th>
                         <th>Mua vào (VNĐ/lượng)</th>
                         <th>Bán ra (VNĐ/lượng)</th>
                         <th>Thay đổi</th>
                     </tr>
                 </thead>
-                <tbody id="currentPriceTable">
+                <tbody id="priceTable">
                     <tr>
-                        <td colspan="4">Đang tải...</td>
+                        <td colspan="5">Đang tải...</td>
                     </tr>
                 </tbody>
             </table>
-            <p class="text-gray-600 text-sm mt-2" id="currentUpdate">Cập nhật lúc: Đang tải...</p>
-        </section>
-
-        <!-- Historical Gold Price -->
-        <section>
-            <h2 class="text-xl font-semibold mb-4">Xem giá vàng theo ngày</h2>
-            <div class="mb-4">
-                <label for="datePicker" class="text-sm font-medium text-gray-700">Chọn ngày:</label>
-                <input type="date" id="datePicker" class="ml-2 p-2 border rounded" max="2025-04-13" value="2025-04-13">
-                <button onclick="loadHistoricalData()" class="ml-2 px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700">Xem</button>
-            </div>
-            <table class="gold-table w-full text-sm">
-                <thead>
-                    <tr>
-                        <th>Loại vàng</th>
-                        <th>Mua vào (VNĐ/lượng)</th>
-                        <th>Bán ra (VNĐ/lượng)</th>
-                    </tr>
-                </thead>
-                <tbody id="historicalTable">
-                    <tr>
-                        <td colspan="3">Đang tải...</td>
-                    </tr>
-                </tbody>
-            </table>
-            <p class="text-gray-600 text-sm mt-2" id="historicalUpdate">Cập nhật lúc: Đang tải...</p>
+            <p class="text-gray-600 text-sm mt-2" id="updateTime">Cập nhật lúc: Đang tải...</p>
         </section>
     </main>
 
+    <script src="/socket.io/socket.io.js"></script>
     <script>
         const locationPath = window.location.pathname.split("/");
         const key = locationPath[locationPath.length - 1];
+        const socket = io();
+        let historicalData = null; 
 
+      
+        socket.on('connect', () => {
+            socket.emit('joinRoom', key);
+        });
+
+       
+        socket.on('priceUpdate', (data) => {
+            updateTable(data, historicalData);
+            document.getElementById('updateTime').textContent = `Cập nhật lúc: ${new Date().toLocaleString('vi-VN')}`;
+        });
+
+        
         async function fetchValue() {
             try {
                 const response = await fetch(`/get/${key}`);
                 if (response.ok) {
-                    const data = await response.json(); // Expecting JSON data
-                    updateCurrentPriceTable(data.current);
-                    document.getElementById('currentUpdate').textContent = `Cập nhật lúc: ${new Date().toLocaleString('vi-VN')}`;
+                    const data = await response.json();
+                    updateTable(data.current, historicalData);
+                    document.getElementById('updateTime').textContent = `Cập nhật lúc: ${new Date().toLocaleString('vi-VN')}`;
                 } else {
                     console.error('Failed to fetch value');
-                    document.getElementById('currentPriceTable').innerHTML = '<tr><td colspan="4">Lỗi khi tải dữ liệu</td></tr>';
+                    document.getElementById('priceTable').innerHTML = '<tr><td colspan="5">Lỗi khi tải dữ liệu</td></tr>';
                 }
             } catch (error) {
                 console.error('Error:', error);
-                document.getElementById('currentPriceTable').innerHTML = '<tr><td colspan="4">Lỗi khi tải dữ liệu</td></tr>';
+                document.getElementById('priceTable').innerHTML = '<tr><td colspan="5">Lỗi khi tải dữ liệu</td></tr>';
             }
         }
 
-        function updateCurrentPriceTable(data) {
-            const tableBody = document.getElementById('currentPriceTable');
+        // Fetch historical data
+        async function loadHistoricalData() {
+            const datePicker = document.getElementById('datePicker').value;
+            if (!datePicker) {
+                historicalData = null;
+                fetchValue();
+                return;
+            }
+
+            try {
+                const response = await fetch(`/get/${key}?date=${datePicker}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    historicalData = data.historical.map(item => ({
+                        ...item,
+                        date: new Date(datePicker).toLocaleDateString('vi-VN')
+                    }));
+                    updateTable(null, historicalData);
+                } else {
+                    console.error('Failed to fetch historical data');
+                    historicalData = null;
+                    updateTable(null, null);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                historicalData = null;
+                updateTable(null, null);
+            }
+        }
+
+        // Update table with current and historical data
+        function updateTable(currentData, historicalData) {
+            let currentPrices = currentData;
+            if (!currentPrices) {
+                fetch(`/get/${key}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        currentPrices = data.current;
+                        renderTable(currentPrices, historicalData);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching current data:', error);
+                        document.getElementById('priceTable').innerHTML = '<tr><td colspan="5">Lỗi khi tải dữ liệu</td></tr>';
+                    });
+            } else {
+                renderTable(currentPrices, historicalData);
+            }
+        }
+
+        // Render the table with both current and historical data
+        function renderTable(currentData, historicalData) {
+            const tableBody = document.getElementById('priceTable');
             tableBody.innerHTML = '';
-            data.forEach((item, index) => {
+
+            // Display current prices
+            const currentDate = new Date().toLocaleDateString('vi-VN');
+            currentData.forEach((item, index) => {
                 const row = document.createElement('tr');
                 if (index === 0) row.classList.add('highlight');
                 const changeColor = item.change.startsWith('▲') ? 'text-green-600' : item.change.startsWith('▼') ? 'text-red-600' : 'text-gray-600';
                 row.innerHTML = `
+                    <td>${currentDate}</td>
                     <td>${item.type}</td>
                     <td>${item.buy}</td>
                     <td>${item.sell}</td>
@@ -111,42 +165,30 @@
                 `;
                 tableBody.appendChild(row);
             });
-        }
 
-        async function loadHistoricalData() {
-            const datePicker = document.getElementById('datePicker').value;
-            const historicalTable = document.getElementById('historicalTable');
-            const historicalUpdate = document.getElementById('historicalUpdate');
+            // Add separator and historical prices if available
+            if (historicalData && historicalData.length > 0) {
+                const separatorRow = document.createElement('tr');
+                separatorRow.classList.add('separator');
+                separatorRow.innerHTML = `<td colspan="5">Giá lịch sử</td>`;
+                tableBody.appendChild(separatorRow);
 
-            try {
-                const response = await fetch(`/get/${key}?date=${datePicker}`);
-                if (response.ok) {
-                    const data = await response.json(); // Expecting JSON data
-                    historicalTable.innerHTML = '';
-                    data.historical.forEach((item, index) => {
-                        const row = document.createElement('tr');
-                        if (index === 0) row.classList.add('highlight');
-                        row.innerHTML = `
-                            <td>${item.type}</td>
-                            <td>${item.buy}</td>
-                            <td>${item.sell}</td>
-                        `;
-                        historicalTable.appendChild(row);
-                    });
-                    historicalUpdate.textContent = `Cập nhật lúc: ${new Date(datePicker).toLocaleDateString('vi-VN')}`;
-                } else {
-                    console.error('Failed to fetch historical data');
-                    historicalTable.innerHTML = '<tr><td colspan="3">Không có dữ liệu cho ngày này</td></tr>';
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                historicalTable.innerHTML = '<tr><td colspan="3">Lỗi khi tải dữ liệu</td></tr>';
+                historicalData.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    if (index === 0) row.classList.add('highlight');
+                    row.innerHTML = `
+                        <td>${item.date}</td>
+                        <td>${item.type}</td>
+                        <td>${item.buy}</td>
+                        <td>${item.sell}</td>
+                        <td>-</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
             }
         }
 
-        // Initial fetch and periodic update
         fetchValue();
-        setInterval(fetchValue, 2000);
     </script>
 </body>
 </html>
