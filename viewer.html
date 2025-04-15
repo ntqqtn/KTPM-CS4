@@ -4,57 +4,151 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Viewer</title>
+    <style>
+        body {
+            font-family: Arial;
+            margin: 40px;
+        }
+        form {
+            margin-bottom: 30px;
+        }
+        label, input {
+            display: block;
+            margin: 10px 0;
+        }
+    </style>
 </head>
 <body>
-    <h1>Your key value is:</h1>
+    <h1>Quản lý giá vàng</h1>
+
+    <!-- Form nhập liệu -->
+    <form id="gold-form">
+        <label>
+            Loại vàng:
+            <input type="text" id="gold_type" required />
+        </label>
+        <label>
+            Giá mua vào:
+            <input type="number" step="0.01" id="buy_price" required />
+        </label>
+        <label>
+            Giá bán ra:
+            <input type="number" step="0.01" id="sell_price" required />
+        </label>
+        <button type="submit">Gửi dữ liệu</button>
+    </form>
+
+    <!-- Hiển thị cập nhật mới nhất -->
+    <h2>Lần cập nhật mới nhất:</h2>
     <p id="value">loading...</p>
+
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+
     <script>
-        const locationPath = window.location.pathname.split("/");
-        const key = locationPath[locationPath.length - 1];
+        const socket = io('http://localhost:8080');
+        const valueDisplay = document.getElementById('value');
+        const form = document.getElementById('gold-form');
+
+        const now = new Date();
+        const datetime = now.toISOString();
+        
         async function fetchValue() {
-            try {
-                const now = new Date();
-                const datetime = now.toLocaleString('vi-VN');
-
-                //add data to db
-                const response = await fetch('http://localhost:8080/add', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ key: datetime, value: datetime })
-                });
-
-                //get all data in db
-                const getData = await fetch('http://localhost:8080/getAll');
-                console.log("getData:", getData);
-
-                //get data with id
-                const testGetId = await fetch('http://localhost:8080/get/undefined');
-                const valueTestGetId = await testGetId.json();
-                console.log("testGetId", valueTestGetId);
-
-                //test api viewer with id
-                const testViewId = await fetch('http://localhost:8080/viewer/1');
-
-                if (getData.ok) {
-                    const data = await getData.json();
-                    // Biến data là mảng, hiển thị gộp giá trị chẳng hạn:
-
-                    const display = data.map(item => `Key: ${item.keyID}, Value: ${item.value}`).join('\n');
-
-                    console.log("data tu viewALl", data);
-                    // const display = data.map(item => `Key: ${item.key}, Value: ${item.value}`).join('\n');
-                    document.getElementById('value').innerText = display;
-            } else {
-                console.error('Failed to fetch value');
-            }
-            } catch (error) {
-            console.error('Error:', error);
-            }
+            const data_latest_price = await fetch('http://localhost:8080/get-latest-price');
+            const value = await data_latest_price.json();
+            console.log("data_latest_price", value);
+            valueDisplay.innerText = `
+                    Loại vàng: ${value.gold_type}
+                    Mua vào: ${value.buy_price}
+                    Bán ra: ${value.sell_price}
+                    Cập nhật lúc: ${value.updated_at}
+                `;
+            
         }
-
+       
         fetchValue();
+        
+
+        //Gửi dữ liệu form lên server qua fetch
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const gold_type = document.getElementById('gold_type').value;
+            const buy_price = parseFloat(document.getElementById('buy_price').value);
+            const sell_price = parseFloat(document.getElementById('sell_price').value);
+
+            const res = await fetch('http://localhost:8080/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ gold_type, buy_price, sell_price, updated_at: datetime })
+            });
+
+            const result = await res.json();
+            alert(result.message);
+        });
+
+        
+         // Nhận dữ liệu mới từ server qua socket
+         socket.on('gold_update', (data) => {
+            console.log(data);
+            valueDisplay.innerText = `
+                Loại vàng: ${data.gold_type}
+                Mua vào: ${data.buy_price}
+                Bán ra: ${data.sell_price}
+                Cập nhật lúc: ${data.updated_at}
+            `;
+        });
+
+        // const locationPath = window.location.pathname.split("/");
+        // const key = locationPath[locationPath.length - 1];
+        // async function fetchValue() {
+        //     try {
+        //         const now = new Date();
+        //         const datetime = now.toLocaleString('vi-VN');
+
+        //         //add data to db
+        //         const response = await fetch('http://localhost:8080/add', {
+        //             method: 'POST',
+        //             headers: {
+        //                 'Content-Type': 'application/json'
+        //             },
+        //             body: JSON.stringify({ gold_type: "SJC ", 
+        //                                     sell_price: 100, 
+        //                                     buy_price: 99.8,
+        //                                     updated_at: datetime})
+        //         });
+
+        //         console.log("frontend");
+        //         //get all data in db
+        //         // const getData = await fetch('http://localhost:8080/getAll');
+        //         // const data_res = await getData.json();
+        //         // console.log("getData:", data_res);
+
+        //         // //get data with id
+        //         // const testGetId = await fetch('http://localhost:8080/get/undefined');
+        //         // const valueTestGetId = await testGetId.json();
+        //         // console.log("testGetId", valueTestGetId);
+
+        //         // //test api viewer with id
+        //         // const testViewId = await fetch('http://localhost:8080/viewer/1');
+
+        //     //     if (getData.ok) {
+        //     //         const data = await getData.json();
+        //     //         // Biến data là mảng, hiển thị gộp giá trị chẳng hạn:
+
+        //     //         const display = data.map(item => `gold_type: ${item.gold_type}, sell_price: ${item.sell_price}, buy_price: ${item.buy_price}, updated_at: ${item.updated_at}`).join('\n');
+
+        //     //         console.log("data tu viewALl", data);
+        //     //         // const display = data.map(item => `Key: ${item.key}, Value: ${item.value}`).join('\n');
+        //     //         document.getElementById('value').innerText = display;
+        //     // } else {
+        //     //     console.error('Failed to fetch value');
+        //     // }
+        //     } catch (error) {
+        //     console.error('Error:', error);
+        //     }
+        // }
+
+        // fetchValue();
         // setInterval(fetchValue, 2000);
     </script>
 </body>
