@@ -2,7 +2,7 @@ const express = require('express');
 const http = require('http');
 const cors = require("cors");
 const { setupSocket } = require('./services/socket.js');
-const { subscribeGoldPrice } = require('./pubsub/subscriber.js');
+const { subscribeGoldPrice } = require('./services/pubsub/subscriber.js');
 const apiRoutes = require('./routes/api.js');
 const { connectRedis } = require('./services/redis.js');
 

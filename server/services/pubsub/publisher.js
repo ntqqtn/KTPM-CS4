@@ -1,4 +1,4 @@
-const { publisher } = require('../services/redis.js');
+const { publisher } = require('../redis.js');
 
 async function publishGoldPrice(data) {
   try {

@@ -1,5 +1,5 @@
 const db = require('../db/dbConnect');
-const { publishGoldPrice } = require('../pubsub/publisher');
+const { publishGoldPrice } = require('../services/pubsub/publisher');
 
 async function saveGoldPrice({ gold_type, sell_price, buy_price, updated_at }) {
   return new Promise((resolve, reject) => {

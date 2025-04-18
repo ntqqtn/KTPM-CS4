@@ -1,5 +1,5 @@
-const { subscriber } = require('../services/redis.js');
-const { emitGoldPriceUpdate } = require('../services/socket.js');
+const { subscriber } = require('../redis.js');
+const { emitGoldPriceUpdate } = require('../socket.js');
 
 async function subscribeGoldPrice() {
   try {
