@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viewer</title>
+</head>
+<body>
+    <h1>Quản lý giá vàng</h1>
+
+    <!-- Hiển thị cập nhật mới nhất -->
+    <h2>Lần cập nhật mới nhất:</h2>
+    <p id="value">loading...</p>
+
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+
+    <script>
+        const socket = io('http://localhost:3000');
+        const valueDisplay = document.getElementById('value');
+
+        const now = new Date();
+        const datetime = now.toISOString();
+        
+        async function fetchValue() {
+            try {
+                const response = await fetch('http://localhost:3000/api/latest-gold-price');
+                const value = await response.json();
+                console.log("data_latest_price", value);
+
+                if (value.success && value.data.length > 0) {
+                    // Duyệt toàn bộ mảng data
+                    const html = value.data.map((gold) => {
+                        return `
+                            <div style="margin-bottom: 1em;">
+                                <strong>Loại vàng:</strong> ${gold.gold_type}<br>
+                                <strong>Mua vào:</strong> ${gold.buy_price}<br>
+                                <strong>Bán ra:</strong> ${gold.sell_price}<br>
+                                <strong>Cập nhật lúc:</strong> ${new Date(gold.updated_at).toLocaleString()}
+                            </div>
+                        `;
+                    }).join("");
+
+                    valueDisplay.innerHTML = html;
+                } else {
+                    valueDisplay.innerText = 'Không có dữ liệu.';
+                }
+            } catch (error) {
+                console.error("Lỗi khi fetch giá vàng:", error);
+                valueDisplay.innerText = 'Lỗi khi lấy dữ liệu.';
+            }
+        }
+       
+        fetchValue();
+         // Nhận dữ liệu mới từ server qua socket
+         socket.on('gold_update', (data) => {
+            console.log(data);
+            valueDisplay.innerText = `
+                Loại vàng: ${data.gold_type}
+                Mua vào: ${data.buy_price}
+                Bán ra: ${data.sell_price}
+                Cập nhật lúc: ${data.updated_at}
+            `;
+        });
+    </script>
+</body>
+</html>

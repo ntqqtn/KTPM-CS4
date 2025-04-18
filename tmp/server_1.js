@@ -8,7 +8,7 @@ const { redisPublisher, redisSubscriber, connectRedis } = require('./redis');
 
 const path = require('path');
 
-const lib = require('./utils');
+const lib = require('./utils_1');
 
 const app = express();
 const port = 8080;
