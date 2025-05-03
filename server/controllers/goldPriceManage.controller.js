@@ -1,4 +1,4 @@
-const { saveGoldPrice, viewLatestGoldPrice } = require('../utils/goldService.js');
+const { saveGoldPrice, viewLatestGoldPrice, view_by_date } = require('../utils/goldService.js');
 
 const goldPriceManageController = {
     getLatestGoldPrice: async (req, res) => {
@@ -25,7 +25,24 @@ const goldPriceManageController = {
         }
     },
     deleteGoldType: (req, res) => {
+      
+    },
+    getPriceWithDate: async (req, res) => {
+      try{
+        const date = req.params.date;
+        console.log("date", date);
 
+        if (!view_by_date) {
+          console.log("Hàm view_by_date chưa được định nghĩa hoặc import.");
+          return res.status(500).json({ success: false, message: 'view_by_date not found' });
+        }
+        
+        const data = await view_by_date(date);
+        console.log("data trong view by date", data)
+        res.status(200).json({ success: true, data });
+      } catch (err) {
+        res.status(500).json({ success: false, message: err });
+      } 
     }
 }
 
