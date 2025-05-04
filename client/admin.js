@@ -138,9 +138,10 @@ const socket = io('http://localhost:3000');
 
         // Hàm xóa loại vàng
         async function deleteGoldType(gold_type) {
+            console.log("delete", gold_type);
             if (confirm(`Bạn có chắc chắn muốn xóa tất cả dữ liệu của ${gold_type}? Hành động này không thể hoàn tác.`)) {
                 try {
-                    const res = await fetch('http://localhost:3000/delete-gold-type', {
+                    const res = await fetch('http://localhost:3000/api/admin-delete', {
                         method: 'DELETE',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ gold_type })

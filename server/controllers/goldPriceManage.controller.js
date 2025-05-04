@@ -1,4 +1,4 @@
-const { saveGoldPrice, viewLatestGoldPrice, view_by_date } = require('../utils/goldService.js');
+const { saveGoldPrice, viewLatestGoldPrice, view_by_date, deleteByGoldType } = require('../utils/goldService.js');
 
 const goldPriceManageController = {
     getLatestGoldPrice: async (req, res) => {
@@ -24,8 +24,20 @@ const goldPriceManageController = {
             return res.status(500).json({ message: 'Internal server error' });
         }
     },
-    deleteGoldType: (req, res) => {
-      
+    deleteGoldType: async (req, res) => {
+      try {
+        const { gold_type } = req.body;
+        if(!gold_type) {
+          return res.status(400).json({message: 'Missing required gold_type'});
+        }
+
+        await deleteByGoldType(gold_type);
+        return res.status(201).json({ message: 'Delete gold type successfully' });
+
+      } catch (error) {
+        console.error('Error deleting gold type:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+      }
     },
     getPriceWithDate: async (req, res) => {
       try{
