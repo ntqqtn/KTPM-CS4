@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giá vàng hôm nay</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <style>
+        .gold-table th, .gold-table td {
+            border: 1px solid #e5e7eb;
+            padding: 8px;
+            text-align: center;
+        }
+        .gold-table th {
+            background-color: #f3f4f6;
+        }
+        .gold-table tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+        .gold-table .highlight {
+            background-color: #fefcbf;
+        }
+        .separator {
+            background-color: #d1d5db;
+            font-weight: bold;
+            color: #374151;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <main class="container mx-auto px-4 py-8">
+        <section class="mb-8">
+            <h1 class="text-3xl font-bold mb-4">Giá vàng hôm nay</h1>
+            <div class="mb-4">
+                <label for="datePicker" class="text-sm font-medium text-gray-700">Chọn ngày để xem:</label>
+                <input type="date" id="datePicker" class="ml-2 p-2 border rounded" title="Chọn ngày để xem giá vàng lịch sử" max="2025-05-04">
+                <button onclick="loadHistoricalData()" class="ml-2 px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700">Xem</button>
+            </div>
+            <table class="gold-table w-full text-sm">
+                <thead>
+                    <tr>
+                        <th>Loại vàng</th>
+                        <th>Giá mua</th>
+                        <th>Giá bán</th>
+                    </tr>
+                </thead>
+                <tbody id="priceTable">
+                    <tr>
+                        <td colspan="3">Đang tải...</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="text-gray-600 text-sm mt-2" id="updateTime">Cập nhật lúc: Đang tải...</p>
+        </section>
+    </main>
+
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="client.js"></script>
+</body>
+</html>

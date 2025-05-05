@@ -1,0 +1,52 @@
+{"ip":"::1","level":"error","message":"JWT verification error: invalid signature"}
+{"ip":"::1","level":"error","message":"JWT verification error: invalid signature"}
+{"ip":"::1","level":"info","message":"Login successful","username":"admin"}
+{"ip":"::1","level":"info","message":"Token verified successfully","username":"admin"}
+{"ip":"::1","level":"info","message":"Authentication check successful","username":"admin"}
+{"ip":"::1","level":"info","message":"Token verified successfully","username":"admin"}
+{"ip":"::1","level":"info","message":"Token verified successfully","username":"admin"}
+{"ip":"::1","level":"info","message":"Authentication check successful","username":"admin"}
+{"ip":"::1","level":"info","message":"Token verified successfully","username":"admin"}
+{"ip":"::1","level":"info","message":"Logout successful"}
+{"ip":"::1","level":"warn","message":"No JWT token found"}
+{"ip":"::1","level":"warn","message":"No JWT token found"}
+{"ip":"::1","level":"info","message":"First login detected, requiring password change","username":"admin"}
+{"ip":"::1","level":"info","message":"First login detected, requiring password change","username":"admin"}
+{"ip":"::1","level":"info","message":"First login detected, requiring password change","username":"admin"}
+{"ip":"::1","level":"info","message":"Token verified successfully","username":"admin"}
+{"ip":"::1","level":"info","message":"Authentication check successful","username":"admin"}
+{"ip":"::1","level":"info","message":"Logout successful"}
+{"ip":"::1","level":"warn","message":"No JWT token found"}
+{"ip":"::1","level":"info","message":"First login detected, requiring password change","username":"admin"}
+{"ip":"::1","level":"info","message":"First login detected, requiring password change","username":"admin"}
+{"ip":"::1","level":"info","message":"First login detected, requiring password change","username":"admin"}
+{"ip":"::1","level":"info","message":"Token verified successfully","username":"admin"}
+{"ip":"::1","level":"info","message":"Authentication check successful","username":"admin"}
+{"ip":"::1","level":"info","message":"Logout successful"}
+{"ip":"::1","level":"warn","message":"No JWT token found"}
+{"ip":"::1","level":"info","message":"First login detected, requiring password change","username":"admin"}
+{"ip":"::1","level":"info","message":"First login detected, requiring password change","username":"admin"}
+{"ip":"::1","level":"info","message":"First login detected, requiring password change","username":"admin"}
+{"ip":"::1","level":"info","message":"Token verified successfully","username":"admin"}
+{"ip":"::1","level":"info","message":"Authentication check successful","username":"admin"}
+{"ip":"::1","level":"info","message":"Logout successful"}
+{"ip":"::1","level":"warn","message":"No JWT token found"}
+{"ip":"::1","level":"info","message":"First login detected, requiring password change","username":"admin"}
+{"ip":"::1","level":"info","message":"First login detected, requiring password change","username":"admin"}
+{"ip":"::1","level":"info","message":"Token verified successfully","username":"admin"}
+{"ip":"::1","level":"info","message":"Authentication check successful","username":"admin"}
+{"ip":"::1","level":"info","message":"Logout successful"}
+{"ip":"::1","level":"warn","message":"No JWT token found"}
+{"ip":"::1","level":"warn","message":"No JWT token found"}
+{"ip":"::1","level":"info","message":"First login detected, requiring password change","username":"admin"}
+{"ip":"::1","level":"info","message":"First login detected, requiring password change","username":"admin"}
+{"ip":"::1","level":"info","message":"Token verified successfully","username":"admin"}
+{"ip":"::1","level":"info","message":"Authentication check successful","username":"admin"}
+{"ip":"::1","level":"warn","message":"No JWT token found"}
+{"ip":"::1","level":"info","message":"First login detected, requiring password change","username":"admin"}
+{"ip":"::1","level":"info","message":"Token verified successfully","username":"admin"}
+{"ip":"::1","level":"info","message":"Password changed successfully","username":"admin"}
+{"ip":"::1","level":"info","message":"Login successful","username":"admin"}
+{"ip":"::1","level":"info","message":"Token verified successfully","username":"admin"}
+{"ip":"::1","level":"info","message":"Authentication check successful","username":"admin"}
+{"ip":"::1","level":"info","message":"Token verified successfully","username":"admin"}
