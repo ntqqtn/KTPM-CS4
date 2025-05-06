@@ -16,6 +16,7 @@ function setupSocket(server) {
 
 function emitGoldPriceUpdate(data) {
   if (io) {
+    console.log("data emit", data);
     io.emit('gold-price-update', data);
   }
 }

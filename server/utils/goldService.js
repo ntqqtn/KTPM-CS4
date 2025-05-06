@@ -20,7 +20,7 @@ async function saveGoldPrice({ gold_type, sell_price, buy_price, updated_at }) {
     });
 
     // Gọi hàm xử lý tiếp sau khi lưu thành công
-    await publishGoldPrice({ gold_type, sell_price, buy_price, updated_at });
+    // await publishGoldPrice({ gold_type, sell_price, buy_price, updated_at });
   } catch (err) {
     throw new Error('Lỗi khi lưu dữ liệu vàng: ' + err.message);
   }

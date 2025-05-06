@@ -1,4 +1,5 @@
 const { saveGoldPrice, viewLatestGoldPrice, view_by_date, deleteByGoldType } = require('../utils/goldService.js');
+const { publishGoldPrice } = require('../services/pubsub/publisher');
 
 const goldPriceManageController = {
     getLatestGoldPrice: async (req, res) => {
@@ -16,7 +17,8 @@ const goldPriceManageController = {
             if (!gold_type || !sell_price || !buy_price || !updated_at) {
               return res.status(400).json({ message: 'Missing required fields' });
             }
-        
+
+            await publishGoldPrice({ gold_type, sell_price, buy_price, updated_at });
             await saveGoldPrice({ gold_type, sell_price, buy_price, updated_at });
             return res.status(201).json({ message: 'Gold price added successfully' });
           } catch (error) {
