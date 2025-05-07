@@ -1,4 +1,4 @@
-# Hệ Thống Quản Lý Giá Vàng
+# Hệ Thống Quản Lý Giá Vàng Theo Thời Gian Thực
 
 Hệ thống quản lý giá vàng là một ứng dụng web cho phép theo dõi và cập nhật giá vàng theo thời gian thực. Phiên bản tối ưu hóa cải thiện hiệu suất, bảo mật, và khả năng mở rộng so với hệ thống gốc, sử dụng các công nghệ hiện đại như MySQL, Redis, Socket.IO, và Sequelize. Dự án này bao gồm giao diện người dùng (`client.html`) và giao diện quản trị (`admin.html`) để quản lý dữ liệu giá vàng.
 
