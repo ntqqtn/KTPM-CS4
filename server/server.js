@@ -8,7 +8,7 @@ const apiRoutes = require('./routes/api');
 const { connectRedis } = require('./services/redis');
 const path = require('path');
 require('dotenv').config();
-
+http.globalAgent.maxSockets = Infinity; // Tăng giới hạn kết nối đồng thời
 const app = express();
 const server = http.createServer(app);
 
@@ -42,3 +42,4 @@ async function startServer() {
 }
 
 startServer();
+server.timeout = 120000;

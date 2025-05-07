@@ -14,6 +14,7 @@ const goldPriceManageController = {
   addGoldPrice: async (req, res) => {
     try {
       const { gold_type, sell_price, buy_price, updated_at } = req.body;
+      // console.log(req.body);
       if (!gold_type || !sell_price || !buy_price || !updated_at) {
         return res.status(400).json({ success: false, message: 'Missing required fields' });
       }
@@ -23,6 +24,7 @@ const goldPriceManageController = {
       res.status(500).json({ success: false, message: err.message });
     }
   },
+
 
   deleteGoldType: async (req, res) => {
     try {

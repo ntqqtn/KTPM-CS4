@@ -1,90 +1,120 @@
 const { Sequelize, DataTypes } = require('sequelize');
-const path = require('path');
+const mysql = require('mysql2/promise'); // Thêm thư viện mysql2
 const bcrypt = require('bcrypt');
 require('dotenv').config();
 
+async function createDatabaseIfNotExists() {
+  try {
+    // Kết nối ban đầu để kiểm tra và tạo cơ sở dữ liệu
+    const connection = await mysql.createConnection({
+      host: 'localhost',
+      port: 3306,
+      user: 'root',
+      password: 'qqqqqqqqqq',
+      pool: {
+        max: 20, // Tăng số kết nối tối đa
+        min: 5,
+        acquire: 30000,
+        idle: 10000,
+      },
+    });
+
+    await connection.query('CREATE DATABASE IF NOT EXISTS gold_price');
+    console.log('Database "gold_price" checked/created successfully.');
+    await connection.end();
+  } catch (err) {
+    console.error('Error creating database:', err.message);
+    throw new Error('Database creation failed');
+  }
+}
+
 const sequelize = new Sequelize({
-  dialect: 'sqlite',
-  storage: path.resolve(__dirname, 'app.db'),
-  logging: false
+  dialect: 'mysql',
+  host: 'localhost',
+  port: 3306,
+  username: 'root',
+  password: 'qqqqqqqqqq',
+  database: 'gold_price',
+  logging: false, // Tắt log SQL
 });
 
 const Data = sequelize.define('Data', {
   gold_type: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
   },
   sell_price: {
     type: DataTypes.REAL,
-    allowNull: false
+    allowNull: false,
   },
   buy_price: {
     type: DataTypes.REAL,
-    allowNull: false
+    allowNull: false,
   },
   updated_at: {
     type: DataTypes.DATE,
-    allowNull: false
-  }
+    allowNull: false,
+  },
 }, {
   tableName: 'data',
   indexes: [
     {
       unique: true,
-      fields: ['gold_type', 'updated_at']
-    }
+      fields: ['gold_type', 'updated_at'],
+    },
   ],
-  timestamps: false
+  timestamps: false,
 });
 
 const Admin = sequelize.define('Admin', {
   username: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true
+    unique: true,
   },
   password: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
   },
   mustChangePassword: {
     type: DataTypes.BOOLEAN,
-    defaultValue: true
-  }
+    defaultValue: true,
+  },
 }, {
   tableName: 'admins',
-  timestamps: false
+  timestamps: false,
 });
 
 const RefreshToken = sequelize.define('RefreshToken', {
   token: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true
+    unique: true,
   },
   adminId: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: false,
   },
   username: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
   },
   expiresAt: {
     type: DataTypes.DATE,
-    allowNull: false
+    allowNull: false,
   },
   ip: {
     type: DataTypes.STRING,
-    allowNull: false
-  }
+    allowNull: false,
+  },
 }, {
   tableName: 'refresh_tokens',
-  timestamps: false
+  timestamps: false,
 });
 
 async function initializeDatabase() {
   try {
+    await createDatabaseIfNotExists(); // Gọi hàm kiểm tra/tạo cơ sở dữ liệu
     await sequelize.authenticate();
     await sequelize.sync({ force: false });
 
@@ -94,14 +124,14 @@ async function initializeDatabase() {
       await Admin.create({
         username: 'admin',
         password: hashedPassword,
-        mustChangePassword: true
+        mustChangePassword: true,
       });
       console.log('Created default admin (username: admin, password: admin123, must change password)');
     }
 
-    console.log('Connected and synced with SQLite database');
+    console.log('Connected and synced with MySQL database');
   } catch (err) {
-    console.error('Unable to connect to SQLite database:', err.message);
+    console.error('Unable to connect to MySQL database:', err.message);
     throw new Error('Database initialization failed');
   }
 }
@@ -115,5 +145,5 @@ module.exports = {
   sequelize,
   Data,
   Admin,
-  RefreshToken
+  RefreshToken,
 };

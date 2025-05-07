@@ -5,7 +5,7 @@ const authenticateJWT = require('../middleware/authenticateJWT');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { Admin, RefreshToken } = require('../db/dbConnect');
-const rateLimit = require('express-rate-limit');
+// const rateLimit = require('express-rate-limit');
 const winston = require('winston');
 
 const logger = winston.createLogger({
@@ -16,14 +16,14 @@ const logger = winston.createLogger({
   ]
 });
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100
-});
+// const limiter = rateLimit({
+//   windowMs: 15 * 60 * 1000,
+//   max: 10000000000
+// });
 
 const generateAccessToken = (user) => {
   return jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, {
-    expiresIn: '15m'
+    expiresIn: '7d'
   });
 };
 
@@ -33,7 +33,7 @@ const generateRefreshToken = (user) => {
   });
 };
 
-router.post('/login', limiter, async (req, res) => {
+router.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
   try {
@@ -249,6 +249,7 @@ router.get('/check-auth', authenticateJWT, async (req, res) => {
     res.status(200).json({ message: 'Authenticated' });
   } catch (err) {
     logger.warn('Authentication check failed', { ip: req.ip });
+    console.log(err);
     res.status(401).json({ message: 'Unauthorized' });
   }
 });
@@ -257,5 +258,7 @@ router.get('/latest-gold-price', GoldPriceManageController.getLatestGoldPrice);
 router.post('/admin-add', authenticateJWT, GoldPriceManageController.addGoldPrice);
 router.delete('/admin-delete', authenticateJWT, GoldPriceManageController.deleteGoldType);
 router.get('/price-with-date/:date', GoldPriceManageController.getPriceWithDate);
+router.get('/getAllPrices', GoldPriceManageController.getAllPrices);
 
+// router.post('/admin-add-noauth', GoldPriceManageController.addGoldPrice);
 module.exports = router;

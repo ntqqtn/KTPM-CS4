@@ -10,7 +10,7 @@ const logger = winston.createLogger({
 });
 
 const authenticateJWT = (req, res, next) => {
-  const token = req.cookies.jwt_token;
+  const token = req.cookies.jwt_token || req.headers.authorization?.split(' ')[1];
 
   if (!token) {
     logger.warn('No JWT token found', { ip: req.ip });
