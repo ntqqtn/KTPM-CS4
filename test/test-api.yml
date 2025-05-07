@@ -1,0 +1,29 @@
+config:
+  target: "http://localhost:3000"
+  phases:
+    - duration: 60
+      arrivalRate: 250
+
+  defaults:
+    log: true
+
+  # processor: "./processor.js"
+
+scenarios:
+  # - flow:
+  #     - function: "setUpdatedAt"
+  #     - post:
+  #         url: "/api/admin-add"
+  #         timeout: 120000 # 120 giây
+  #         headers:
+  #           Content-Type: "application/json"
+  #           Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsImlhdCI6MTc0NjYwNDkwMSwiZXhwIjoxNzQ3MjA5NzAxfQ.8F_FELSkA8yhPSz72gwcX6W6vUSNXyk5lHWyesQ1YE0"
+  #         json:
+  #           gold_type: "24K"
+  #           sell_price: 100000000
+  #           buy_price: 101000000
+  #           updated_at: "{{ updated_at }}"
+
+  - flow:
+    - get:
+        url: "/api/latest-gold-price"
