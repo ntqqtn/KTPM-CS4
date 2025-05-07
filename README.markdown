@@ -213,11 +213,12 @@ Hệ thống ban đầu gặp nhiều hạn chế về hiệu suất, bảo mậ
 
 - **Hệ thống gốc (SQLite)**: Xử lý 4,800 yêu cầu trong 60 giây trước khi xảy ra lỗi.
 - **Hệ thống tối ưu (MySQL)**: Xử lý 7,200 yêu cầu trong 60 giây mà không gặp lỗi.
+   ![Logo](images/test-post-api.png)
 
 ### Test GET API `/api/latest-gold-price`
-
 - **Hệ thống tối ưu**: Xử lý 12,000 yêu cầu trong 60 giây mà không gặp lỗi, nhờ Redis cache và tối ưu hóa truy vấn.
-
+   ![Logo](images/test-get-api.png)
+  
 ## Công Nghệ Sử Dụng
 
 - **MySQL**: Lưu trữ dữ liệu giá vàng, thông tin quản trị viên, và phiên đăng nhập.
