@@ -231,7 +231,3 @@ Hệ thống ban đầu gặp nhiều hạn chế về hiệu suất, bảo mậ
 - **Winston**: Ghi log sự kiện bảo mật.
 - **Cookie-Parser**: Xử lý cookie lưu trữ token.
 - **Dotenv**: Quản lý biến môi trường.
-
-## Kết Luận
-
-Hệ thống quản lý giá vàng đã được nâng cấp toàn diện về hiệu suất, bảo mật, và khả năng mở rộng. Các cải tiến như MySQL, Redis, Socket.IO, và các mẫu thiết kế như Publisher-Subscriber và Cache-Aside đảm bảo hệ thống vận hành hiệu quả, an toàn, và thân thiện với người dùng. Đây là nền tảng vững chắc để phát triển thêm các tính năng trong tương lai.
