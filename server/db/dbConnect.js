@@ -7,15 +7,15 @@ async function createDatabaseIfNotExists() {
   try {
     // Kết nối ban đầu để kiểm tra và tạo cơ sở dữ liệu
     const connection = await mysql.createConnection({
-      host: 'localhost',
-      port: 3306,
-      user: 'root',
-      password: 'qqqqqqqqqq',
+      host: process.env.DB_HOST,
+      port: Number(process.env.DB_PORT),
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
       pool: {
-        max: 20, // Tăng số kết nối tối đa
-        min: 5,
-        acquire: 30000,
-        idle: 10000,
+        max: Number(process.env.DB_POOL_MAX),
+        min: Number(process.env.DB_POOL_MIN),
+        acquire: Number(process.env.DB_POOL_ACQUIRE),
+        idle: Number(process.env.DB_POOL_IDLE),
       },
     });
 
